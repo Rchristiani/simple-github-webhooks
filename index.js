@@ -12,23 +12,31 @@ let server = http.createServer((req,res) => {
 		});
 
 		req.on('end', () => {
-			if(
-				data.repository.name === config.repoName &&
-				data.hook.events.indexOf(config.event) >= 0
-			 ) {
-				let response = {
-					message: 'success'
-				};
-				spawn(config.script);
-				res.writeHead(200, { 'Content-Type': 'application/json' })
-				res.write(JSON.stringify(response));
-				res.end();
+			let response;
+			if(config.event === 'push') {
+				if(data.repository.name === config.repoName) {
+					response = {
+						message: 'Push successful'
+					};
+					spawn(config.script);
+				}
+				else {
+					response = {
+						message: 'Not the request you wanted'
+					}
+				}
 			}
 			else {
-				res.writeHead(200, { 'Content-Type': 'application/json' })
-				res.write(JSON.stringify({messasge: 'Not Quite'}));
-				res.end();
+				if(data.action === 'closed' && data.pull_request.merged) {
+					response = {
+						message: 'Pull Request successful'
+					};
+					spawn(config.script);
+				}
 			}
+			res.writeHead(200, { 'Content-Type': 'application/json' })
+			res.write(JSON.stringify(response));
+			res.end();
 		});
 
 	}
