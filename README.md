@@ -1,8 +1,8 @@
-#Simple Github Webhooks
+# Simple Github Webhooks
 
 There are a bunch of webhook servers out there for node, but they seem to be about 2 years old! Here is a very simple script that will accept a `POST` request and run a bash script for you.
 
-##Config
+## Config
 
 You will need to include a `config.js` file that exports a module.
 
